@@ -72,17 +72,18 @@ if __name__=='__main__':
     import math, matplotlib.pyplot as plt,  kepler.solar as s, kepler.kepler as k, matplotlib.cm as cm, numpy as np
     from scipy.integrate import quad       
 
-
     earth = Earth()
     solar = s.Solar(earth)
-    def rrr(true_longitude,latitude):
-        return sum([solar.surface_irradience(true_longitude,latitude,T) for T in range(0,23)]) 
+    def surface_irradience(true_longitude,latitude):
+        return sum([solar.surface_irradience(math.radians(true_longitude),math.radians(latitude),T) for T in range(0,23)]) 
 
-    x = np.linspace(math.pi/2, 2*math.pi+math.pi/2, num=72) 
-    y = np.linspace(-math.pi/2,math.pi/2,num=72) 
+    x = np.linspace(-90, 270,num=360) 
+    y = np.linspace(-90,90,num=180) 
     X, Y = np.meshgrid(x, y) 
-    zz=np.vectorize(rrr)
-    Z = zz(X,Y) 
-
-    plt.pcolormesh(X, Y, Z, cmap = cm.gist_rainbow) 
+    Z = (np.vectorize(surface_irradience))(X,Y) 
+    fig, ax = plt.subplots()
+    cax=plt.pcolormesh(X, Y, Z, cmap = cm.jet) 
+    cbar = fig.colorbar(cax)
+    plt.ylim([-90,90])
+    plt.title('Surface Irradiance')
     plt.show() 
