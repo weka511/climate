@@ -76,9 +76,9 @@ if __name__=='__main__':
     earth = Earth()
     solar = s.Solar(earth)
     def rrr(true_longitude,latitude):
-        return max([solar.surface_irradience(true_longitude,latitude,T) for T in (0,23)]) 
+        return sum([solar.surface_irradience(true_longitude,latitude,T) for T in range(0,23)]) 
 
-    x = np.linspace(0, 2*math.pi, num=360) 
+    x = np.linspace(math.pi/2, 2*math.pi+math.pi/2, num=72) 
     y = np.linspace(-math.pi/2,math.pi/2,num=72) 
     X, Y = np.meshgrid(x, y) 
     zz=np.vectorize(rrr)
