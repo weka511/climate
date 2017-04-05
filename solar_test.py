@@ -77,7 +77,7 @@ def lat(i):
 if __name__=='__main__':
     import math, matplotlib.pyplot as plt,  kepler.solar as s, kepler.kepler as k, matplotlib.cm as cm, numpy as np
     from scipy.integrate import quad       
-
+    
     earth = Earth()
     solar = s.Solar(earth)
     def surface_irradience(true_longitude,latitude):
@@ -92,6 +92,8 @@ if __name__=='__main__':
     cax=plt.pcolormesh(X, Y, Z, cmap = cm.jet) 
     cbar = fig.colorbar(cax)
     plt.ylim([-90,90])
+    ax.set_xticks([i for i in range(-90,270,30)])
+    ax.set_xticklabels(['JFMAMJJASOND'[i] for i in range(0,12)])    
     ax.set_yticks([i for i in range(-90,91,30)])
     ax.set_yticklabels([lat(i) for i in range(-90,91,30)])
     plt.title('Surface Irradiance')
