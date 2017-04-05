@@ -67,7 +67,13 @@ class Earth:
         '''
         return math.radians(15*T-180)   
 
-    
+def lat(i):
+    if i<0:
+        return '{0}S'.format(i)
+    if i>0:
+        return '{0}N'.format(i)
+    return '0'
+
 if __name__=='__main__':
     import math, matplotlib.pyplot as plt,  kepler.solar as s, kepler.kepler as k, matplotlib.cm as cm, numpy as np
     from scipy.integrate import quad       
@@ -79,11 +85,15 @@ if __name__=='__main__':
 
     x = np.linspace(-90, 270,num=360) 
     y = np.linspace(-90,90,num=180) 
+  
     X, Y = np.meshgrid(x, y) 
     Z = (np.vectorize(surface_irradience))(X,Y) 
     fig, ax = plt.subplots()
     cax=plt.pcolormesh(X, Y, Z, cmap = cm.jet) 
     cbar = fig.colorbar(cax)
     plt.ylim([-90,90])
+    ax.set_yticks([i for i in range(-90,91,30)])
+    ax.set_yticklabels([lat(i) for i in range(-90,91,30)])
     plt.title('Surface Irradiance')
+    plt.savefig('surface.png')
     plt.show() 
