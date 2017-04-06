@@ -76,12 +76,14 @@ def true_longitude(day):
 def declination(day): #Jan 1 is day zero
     return m.asin(s.sin_declination(m.radians(23.4),true_longitude(day)))
 
-days=list(itertools.accumulate([31,28,31,30,31,30,31,31,30,31,30,31])) 
+def days():
+    return list(itertools.accumulate([31,28,31,30,31,30,31,31,30,31,30,31]))
+
 earth = Earth()
 solar = s.Solar(earth)
 
 fig, ax = plt.subplots()
-plt.figure(1,figsize=(20,20))
+plt.figure(1,figsize=(40,40))
 ax1=plt.subplot(221)
 
 xs=list(range(0,366))
@@ -89,18 +91,18 @@ ys=[m.degrees(declination(day)) for day in xs]
 plt.plot(xs,ys)
 plt.title('Solar declination of Earth')
 plt.ylabel('Declination - degrees')
-ax1.set_xticks([i for i in days])
+ax1.set_xticks([i for i in days()])
 ax1.set_xticklabels(['JFMAMJJASOND'[i] for i in range(0,12)])        
 plt.savefig('declination.png')
 
-ax2=plt.subplot(222)
-
 def day_length(day,latitude):
-    phi=true_longitude(day)
-    ha1=solar.ha_sunrise_sunset(phi,m.radians(latitude),sunset=False)
-    ha2=solar.ha_sunrise_sunset(phi,m.radians(latitude))
-    print ('{0:7.2f}, {1:7.2f}, {2:7.2f}'.format(phi,latitude,m.degrees(ha2-ha1)/15))
+    true_long=true_longitude(day)
+    ha1=solar.ha_sunrise_sunset(true_long,m.radians(latitude),sunset=False)
+    ha2=solar.ha_sunrise_sunset(true_long,m.radians(latitude))
+    #print ('{0:7.2f}, {1:7.2f}, {2:7.2f}'.format(true_long,latitude,m.degrees(ha2-ha1)/15))
     return m.degrees(ha2-ha1)/15
+
+ax2=plt.subplot(222)
 
 x = np.linspace(0, 366) 
 y = np.linspace(-90,  90) 
@@ -112,12 +114,39 @@ cax=plt.pcolormesh(X, Y, Z, cmap = cm.jet)
 cbar = fig.colorbar(cax)
 #plt.xlim(-90,271)
 #plt.ylim([-90,90])
-ax2.set_xticks([i for i in days])
+ax2.set_xticks([i for i in days()])
 ax2.set_xticklabels(['JFMAMJJASOND'[i] for i in range(0,12)])    
 ax2.set_yticks([i for i in range(-90,90,30)])
 ax2.set_yticklabels([lat(i) for i in range(-90,91,30)])
 plt.title('Length of Day')
 plt.savefig('length-of-day.png')
+
+
+###
+def za_noon(day,latitude):
+    return m.degrees(m.acos(s.cos_zenith_angle(m.radians(23.4),true_longitude(day),latitude,0)))
+
+ax3=plt.subplot(223)
+
+x = np.linspace(0, 366) 
+y = np.linspace(-90,  90) 
+
+X, Y = np.meshgrid(x, y) 
+Z = (np.vectorize(za_noon))(X,Y) 
+
+cax=plt.pcolormesh(X, Y, Z, cmap = cm.jet) 
+cbar = fig.colorbar(cax)
+#plt.xlim(-90,271)
+#plt.ylim([-90,90])
+ax3.set_xticks([i for i in days()])
+ax3.set_xticklabels(['JFMAMJJASOND'[i] for i in range(0,12)])    
+ax3.set_yticks([i for i in range(-90,90,30)])
+ax3.set_yticklabels([lat(i) for i in range(-90,91,30)])
+plt.title('Zenith Angle Noon')
+plt.savefig('za-noon.png')
+###
+
+
 #plt.show()     
  
  
