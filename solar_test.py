@@ -149,27 +149,24 @@ plt.title('Zenith Angle Noon')
      
  
  
- #for latitude in range(-90,90,10):
-     #for longitude in range(-90,271,12):
-         #print (longitude,latitude,solar.ha_sunrise_sunset(longitude,latitude))
+# Surface Irradiance
+ 
          
-def surface_irradience(true_longitude,latitude):
-    #ha=s.hour_angle_sunrise_sunset(m.radians(true_longitude),m.radians(latitude))
-    #return sum([solar.surface_irradience(m.radians(true_longitude),m.radians(latitude),T) for T in range(0,23)]) 
-    return solar.surface_irradience_daily(m.radians(true_longitude),m.radians(latitude))
+def surface_irradience(day,latitude):
+    return solar.surface_irradience_daily(true_longitude(day),m.radians(latitude))
 
 ax4=plt.subplot(224)
 
-x = np.linspace(-90, 270,num=360) 
-y = np.linspace(-90,90,num=180) 
+x = np.linspace(0,366) 
+y = np.linspace(-90,90) 
 
 X, Y = np.meshgrid(x, y) 
 Z = (np.vectorize(surface_irradience))(X,Y) 
 #fig, ax = plt.subplots()
 cax=plt.pcolormesh(X, Y, Z, cmap = cm.jet) 
 cbar = fig.colorbar(cax)
-plt.xlim(-90,271)
-plt.ylim([-90,90])
+#plt.xlim(-90,271)
+#plt.ylim([-90,90])
 ax4.set_xticks([i for i in range(-90,271,30)])
 ax4.set_xticklabels(['JFMAMJJASOND'[i] for i in range(0,12)])    
 ax4.set_yticks([i for i in range(-90,91,30)])
