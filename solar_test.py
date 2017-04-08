@@ -79,8 +79,7 @@ def lengths_of_months():
 earth = Earth()
 solar = s.Solar(earth)
 
-fig, ax = plt.subplots()
-plt.figure(1,figsize=(40,40))
+fig, ax = plt.subplots(figsize=(16,12))
 ax1=plt.subplot(221)
 
 # Plot Solar declination of Earth
@@ -92,7 +91,8 @@ plt.title('Solar declination of Earth')
 plt.ylabel('Declination - degrees')
 ax1.set_xticks([i for i in lengths_of_months()])
 ax1.set_xticklabels(['JFMAMJJASOND'[i] for i in range(0,12)])        
-
+ax1.set_yticks([i for i in range(-25,30,5)])
+ax1.grid(color='r', linestyle=':', linewidth=1)
 
 # Plot Length of Day
 
@@ -109,8 +109,7 @@ Z = (np.vectorize(day_length))(X,Y)
 
 cax=plt.pcolormesh(X, Y, Z, cmap = cm.jet) 
 cbar = fig.colorbar(cax)
-#plt.xlim(-90,271)
-#plt.ylim([-90,90])
+
 ax2.set_xticks([i for i in lengths_of_months()])
 ax2.set_xticklabels(['JFMAMJJASOND'[i] for i in range(0,12)])    
 ax2.set_yticks([i for i in range(-90,91,30)])
@@ -138,8 +137,7 @@ Z = (np.vectorize(za_noon))(X,Y)
 
 cax=plt.pcolormesh(X, Y, Z, cmap = cm.jet) 
 cbar = fig.colorbar(cax)
-#plt.xlim(-90,271)
-#plt.ylim([-90,90])
+
 ax3.set_xticks([i for i in lengths_of_months()])
 ax3.set_xticklabels(['JFMAMJJASOND'[i] for i in range(0,12)])    
 ax3.set_yticks([i for i in range(-90,90,30)])
@@ -153,7 +151,7 @@ plt.title('Zenith Angle Noon')
  
          
 def surface_irradience(day,latitude):
-    return solar.surface_irradience_daily(true_longitude(day),m.radians(latitude))
+    return solar.surface_irradience_daily(true_longitude(day),m.radians(latitude),total=False)
 
 ax4=plt.subplot(224)
 
@@ -162,11 +160,10 @@ y = np.linspace(-90,90)
 
 X, Y = np.meshgrid(x, y) 
 Z = (np.vectorize(surface_irradience))(X,Y) 
-#fig, ax = plt.subplots()
+
 cax=plt.pcolormesh(X, Y, Z, cmap = cm.jet) 
 cbar = fig.colorbar(cax)
-#plt.xlim(-90,271)
-#plt.ylim([-90,90])
+
 ax4.set_xticks([i for i in lengths_of_months()])
 ax4.set_xticklabels(['JFMAMJJASOND'[i] for i in range(0,12)])    
 ax4.set_yticks([i for i in range(-90,91,30)])
