@@ -113,12 +113,6 @@ def help():
   print ('      -r --review    Demonstrate functionality for code review')
 
   
-# Determine revision number from subversion
-
-def version(tag='$LastChangedRevision: 890 $'):
-  re_number=re.compile('.* ([0-9]+) .*')
-  match=re_number.match(tag)
-  return int(match.group(1))
 
 # Main program - decode command line argmengts and drive iteration
 
@@ -127,8 +121,8 @@ if __name__=='__main__':
   try:
       opts, args = getopt.getopt( \
             sys.argv[1:],\
-            'hvrp',\
-            ['help','version','review','plot'])
+            'hrp',\
+            ['help','review','plot'])
   except getopt.GetoptError as e:
     print (e)
     help()
@@ -144,9 +138,6 @@ if __name__=='__main__':
     for opt, arg in opts:
       if opt in ['-h','--help']:
         help()
-        sys.exit()
-      elif opt in ['-v','--version']:
-        print ('{0} revision {1}'.format(os.path.basename(sys.argv[0]), version()))
         sys.exit()
       elif opt in ['-r','--review']:
         nYears = 20000
