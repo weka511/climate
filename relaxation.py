@@ -86,9 +86,9 @@ def get_albedo(latitude):
 # Refine albedo and calculate corresponding temperature
 
 def step_albedo(L,albedo):
-  T=get_T(L,albedo)
-  latitude=get_latitudu(T)
-  albedo=get_albedo(latitude)
+  T        = get_T(L,albedo)
+  latitude = get_latitudu(T)
+  albedo   = get_albedo(latitude)
   return (T,albedo)
 
 # get_albedo_from_L
@@ -100,11 +100,11 @@ def step_albedo(L,albedo):
 # Iteration continues until values agree within specified tolerance
 
 def get_albedo_from_L(L,albedo,tolerance):
-  previous_albedo=albedo
-  T,albedo=step_albedo(L,albedo)  
+  previous_albedo = albedo
+  T,albedo        = step_albedo(L,albedo)  
   while abs(albedo-previous_albedo)>tolerance:
-    previous_albedo=albedo
-    T,albedo=step_albedo(L,albedo)    
+    previous_albedo = albedo
+    T,albedo        = step_albedo(L,albedo)    
   return (T,albedo)
 
 # evolve_model
@@ -116,14 +116,14 @@ def get_albedo_from_L(L,albedo,tolerance):
 def evolve_model(first,last,step,tolerance):
   print ('From {0:d} to {1:d} by {2:d}. Tolerance={3}'.\
          format(first,last,step,tolerance))
-  step=10
-  albedo=0.15
-  Ls=[]
-  Ts=[]
+  step   = 10
+  albedo = 0.15
+  Ls     = []
+  Ts     = []
   if last<first:
     step=-step
   for L in range(first,last+step,step):
-    T,albedo=get_albedo_from_L(L,albedo,tolerance)
+    T,albedo = get_albedo_from_L(L,albedo,tolerance)
     print ('{0:d}, {1:0.1f}'.format(L,T))
     Ls.append(L)
     Ts.append(T)

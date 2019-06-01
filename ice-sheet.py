@@ -114,7 +114,7 @@ def help():
 
   
 
-# Main program - decode command line argmengts and drive iteration
+# Main program - decode command line argments and drive iteration
 
 if __name__=='__main__':
   must_plot=False
@@ -129,8 +129,8 @@ if __name__=='__main__':
     sys.exit(2)  
 
   if len(opts)==0:   # This is for the grader
-    nYears = float( input('') )
-    elevation=iterate()
+    nYears    = float( input('') )
+    elevation = iterate()
     print(elevation[5])
   else:               # This is for all other cases
     # Default values for parameters
@@ -140,10 +140,10 @@ if __name__=='__main__':
         help()
         sys.exit()
       elif opt in ['-r','--review']:
-        nYears = 20000
-        must_plot=True
+        nYears    = 20000
+        must_plot = True
       elif opt in ['-p','--plot']:
-        must_plot=True  
+        must_plot = True  
     
     # run model
     
