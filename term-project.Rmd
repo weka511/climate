@@ -1,0 +1,113 @@
+---
+title: "Temperature Trends"
+author: "Simon Crase"
+date: "29 October 2016"
+output: pdf_document
+---
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(knitr)
+source('timeseries.R')
+# Set n.records to -1 to process the entire dataset, 0r 10000 for testing
+n.records <- -1
+# Number of stations
+n.stations <- 25
+```
+
+# Introduction
+
+##Idea
+
+My project started with the idea of showing trends in temperatures from randomly selected stations. I downloaded the list of station names from the [Time Series Browser](http://climatemodels.uchicago.edu/timeseries/), and wrote a short Python script to select station names at random. I then manually selected stations, see link [here](http://climatemodels.uchicago.edu/timeseries/#DpPwBjiUcCsBdlJzLhDaoQtEqDsJqMgRz). However, there is a problem as the figure makes clear: _stations are not distributed uniformly, so the selection will also be skewed._
+```{r fig.width=5, fig.height=5,echo=FALSE,fig.align='left'}
+library(grid)
+img <- readPNG("TimeSeriesBrowser.png")
+ grid.raster(img)
+```
+
+I therefore decided to sample uniformly across the globe: select positions at random, and take the readings from the nearest stations with adequate data. See Methodology Section below.
+
+
+##References
+
+* Code is stored in [my Github repository - user name 'weka11'](https://github.com/weka511/global)
+* The algorithm for uniformly sampling points on the surface of a globe is documented in [Statistical Mechanics: Algorithms and Computations, Werner Krauth](https://www.amazon.com/Statistical-Mechanics-Algorithms-Computations-Physics/dp/0198515367), PDF
+ [here](http://blancopeck.net/Statistics.pdf) - _algorithm 1-22, direct-surface._
+* [Time Series Browser](http://climatemodels.uchicago.edu/timeseries/)
+* [NOAA National Climatic Data Center](ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/v3/)
+
+# Methodology
+
+I decided against using the Time Series Browser, as it was designed for accessing data by station name, not latitude and longitude. I could have written a script to generate random locations, and then screen scrape the data, but past experince with other websites has taught me that this is fraught with difficulty (typically this requires the exploitation of undocumented features in the website: _here be Dragons!_). I decided to use the _data behind the Time Series Browser_ instead. The analyses are perfomed in [R](https://www.r-project.org/), and this document has been generarated by [R Markdown](http://rmarkdown.rstudio.com/) - see References above. **NB: as the R code uses a random number generator, the results of each run will be different.**
+
+* Download stations and monthly average temperature readings from [NOAA National Climatic Data Center](ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/v3/)
+* Randomly sample 
+`r n.stations`
+ locations, uniformly distributed distributed on the surface of the Globe, using the algorithm from Werner Karuth's book, above.
+* Filter the list of stations so they are restricted to those with readings in the time interval of interest (currently 1950 to the present)
+* For each of the `r n.stations` locations, find the nearest station.
+* Tabulate the stations, and plot the time annual average temperatures, along with a regression line
+
+# Results
+
+## Stations and their locations
+
+```{r,echo=FALSE}
+n.increase<-0
+n.decrease<-0
+total.slope<-0
+station.index<-read.index()
+temperature.readings<-read.temperatures(n=n.records)
+ids<-get.random.stations.with.data(n.stations,station.index,temperature.readings)
+rownames(station.index)<-station.index$ID
+ss<-subset(station.index[ids,],TRUE,c('ID','NAME','LATITUDE','LONGITUDE'))
+kable(ss,row.names=FALSE)
+```
+
+## Details from each Station
+
+
+```{r,echo=FALSE}
+for (id in ids){
+  dd<-get.data.for.station(id,temperature.readings)
+  dd<-attach.average.temperature(dd)
+  name<-station.index[station.index$ID==id,5]
+  x<-dd$YEAR
+  y<-dd$MEAN
+  model<-lm(y~x)
+  slope<-coef(model)[[2]]
+  result = tryCatch({
+    if (slope>0) n.increase <- n.increase +1
+    if (slope<0) n.decrease <- n.decrease +1
+    total.slope = total.slope + slope
+    sub<-sprintf("Slope: %.2f degrees per century", 100*slope)
+    plot(x=x,y=y,main=paste(id,name,sep=': '),sub=sub,xlab = "Year", ylab="Average T")
+    abline(model, col="red")
+  }, warning = function(w) {
+    print(slope)
+  }, error = function(e) {
+    plot(x=x,y=y,main=paste(id,name,sep=': '),sub="Error",xlab = "Year", ylab="Average T")
+  }, finally = {
+    
+  })
+
+
+}
+
+```
+
+## Conclusion
+
+The temperature increased at 
+`r n.increase`
+ stations and decreased at 
+`r n.decrease`
+ stations. This is in line with the results I have seen each time I have generated this report for a new random selection: there are far more stations with increases than decreases.
+Average increase is 
+`r sprintf("%.1f",100.0*total.slope/(n.increase + n.decrease))`
+ degrees/century.
+ 
+# Future work
+
+* Allow user to specify a threshold for increases, so we would only consider temperature to be increasing if the slope exceeded some value - say 0.5 degrees per century.
+* Include a summary plot for all stations.
+* Allow program to download latest data from NOAA, instad of using canned data.
