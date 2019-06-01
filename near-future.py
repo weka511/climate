@@ -1,8 +1,4 @@
-# $HeadURL: https://server/svn/sandbox/trunk/coursera/global-warming-model/near-future.py $
-# $LastChangedDate: 2016-11-06 17:44:12 +1300 (Sun, 06 Nov 2016) $
-# $LastChangedRevision: 1064 $
-
-# Copyright (C) 2016 Greenweaves Software Pty Ltd
+# Copyright (C) 2016-2019 Greenweaves Software Limited
 
 # This is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
