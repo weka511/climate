@@ -16,6 +16,13 @@
 # Time-Stepping Naked Planet Model
 # https://www.coursera.org/learn/global-warming-model/supplement/m29aQ/model-formulation
 
+# The goal is to numerically simulate how the planetary temperature of a naked planet would
+# change through time as it approaches equilibrium (the state at which it stops changing, 
+# which we calculated before). The planet starts with some initial temperature. 
+# The “heat capacity” (units of Joules / m2 K) of the planet is set by a layer of 
+# water which absorbs heat and changes its temperature. If the layer is very thick, 
+# it takes a lot more heat (Joules) to change the temperature.
+
 import sys, getopt, re, os
 from scipy import constants
 
@@ -86,13 +93,6 @@ def help():
   print ('   NB timestep may be a fraction of a year. e.g.')
   print ('   python naked.py -p -s 600 -n foo.png -t 0.05 -w 1')
 
-# Determine revision number from subversion
-
-def version(tag='$LastChangedRevision: 1024 $'):
-  re_number=re.compile('.* ([0-9]+) .*')
-  match=re_number.match(tag)
-  return int(match.group(1))
-
 
 # This is the main program. We use command line parameters to have a single
 # program that will pass the grader and generate plots
@@ -109,8 +109,8 @@ if __name__=='__main__':
   try:
     opts, args = getopt.getopt( \
           sys.argv[1:],\
-          'hps:n:t:w:vk:d',\
-          ['help','plot','steps=','name=','timestep=','waterdepth=','version','initialtemperature','debug'])
+          'hps:n:t:w:k:d',\
+          ['help','plot','steps=','name=','timestep=','waterdepth=','initialtemperature','debug'])
   except getopt.GetoptError:
     help()
     sys.exit(2)
@@ -118,9 +118,6 @@ if __name__=='__main__':
   for opt, arg in opts:
     if opt in ['-h','--help']:
       help()
-      sys.exit()
-    elif opt in ['-v','--version']:
-      print ('{0} revision {1}'.format(os.path.basename(sys.argv[0]), version()))
       sys.exit()
     elif opt in ['-s','--steps']:
       number_of_steps = int(arg)
